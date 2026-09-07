@@ -1,0 +1,43 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>Pixel Art</title>
+    <style>
+        body { font-family: system-ui, -apple-system, sans-serif; background: #1c1c1e; color: #ffffff; margin: 0; padding: 20px; display: flex; flex-direction: column; align-items: center; justify-content: center; height: 100vh; box-sizing: border-box; -webkit-user-select: none; user-select: none; }
+        .toolbar { display: flex; gap: 15px; align-items: center; margin-bottom: 20px; background: #2c2c2e; padding: 12px 20px; border-radius: 12px; box-shadow: 0 4px 6px rgba(0,0,0,0.1); }
+        input[type="color"] { border: none; width: 44px; height: 44px; border-radius: 50%; background: none; cursor: pointer; }
+        button { background: #3a3a3c; color: white; border: none; padding: 10px 18px; border-radius: 8px; font-size: 16px; font-weight: 600; cursor: pointer; }
+        button.active { background: #007aff; }
+        #grid { display: grid; grid-template-columns: repeat(16, 1fr); grid-template-rows: repeat(16, 1fr); width: 90vw; height: 90vw; max-width: 450px; max-height: 450px; background: #2c2c2e; border: 2px solid #3a3a3c; border-radius: 8px; overflow: hidden; gap: 1px; }
+        .cell { background: #3a3a3c; cursor: pointer; transition: background 0.1s; }
+    </style>
+</head>
+<body>
+    <div class="toolbar">
+        <input type="color" id="colorPicker" value="#007aff">
+        <button id="eraserBtn">Eraser</button>
+        <button id="clearBtn">Clear All</button>
+    </div>
+    <div id="grid"></div>
+    <script>
+        const grid = document.getElementById('grid');
+        const colorPicker = document.getElementById('colorPicker');
+        const eraserBtn = document.getElementById('eraserBtn');
+        const clearBtn = document.getElementById('clearBtn');
+        let isEraser = false; let isDrawing = false;
+        for (let i = 0; i < 256; i++) {
+            const cell = document.createElement('div');
+            cell.classList.add('cell');
+            cell.addEventListener('pointerdown', (e) => { isDrawing = true; paint(e.target); });
+            cell.addEventListener('pointerenter', (e) => { if (isDrawing) paint(e.target); });
+            grid.appendChild(cell);
+        }
+        window.addEventListener('pointerup', () => isDrawing = false);
+        function paint(cell) { cell.style.backgroundColor = isEraser ? '#3a3a3c' : colorPicker.value; }
+        eraserBtn.addEventListener('click', () => { isEraser = !isEraser; eraserBtn.classList.toggle('active', isEraser); });
+        clearBtn.addEventListener('click', () => { document.querySelectorAll('.cell').forEach(cell => cell.style.backgroundColor = '#3a3a3c'); });
+        document.body.addEventListener('touchmove', (e) => { if(e.target.classList.contains('cell')) e.preventDefault(); }, { passive: false });
+    </script>
+</body>
+</html>
